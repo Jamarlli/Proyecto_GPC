@@ -666,7 +666,7 @@ function actualizarPersonajePreview() {
     const nombreFormateado = personajeActual === 'seagull' ? 'Seagull' : personajeActual;
     document.getElementById('nombrePersonaje').textContent = nombreFormateado;
     document.getElementById('contadorPersonajes').textContent = 
-        '${personajeSeleccionado + 1} / ${personajesDisponibles.length}';
+        `${personajeSeleccionado + 1} / ${personajesDisponibles.length}`;
     
     actualizarBotonSeleccionar();
     
