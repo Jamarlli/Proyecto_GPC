@@ -1,0 +1,11 @@
+Model Information:
+* title:	Bob-omb
+* source:	https://sketchfab.com/3d-models/bob-omb-6c8d4c89ddd04487ae7d506db3cd5b62
+* author:	Théo Horla (https://sketchfab.com/theo.horla)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Bob-omb" (https://sketchfab.com/3d-models/bob-omb-6c8d4c89ddd04487ae7d506db3cd5b62) by Théo Horla (https://sketchfab.com/theo.horla) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

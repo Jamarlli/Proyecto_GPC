@@ -1,0 +1,11 @@
+Model Information:
+* title:	Spyro - Spyro Reignited
+* source:	https://sketchfab.com/3d-models/spyro-spyro-reignited-bb72a671e45c4970a290519b6f46a59c
+* author:	chatholoboom7745289 (https://sketchfab.com/chabsfabo86)
+
+Model License:
+* license type:	CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)
+* requirements:	Author must be credited. No commercial use.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Spyro - Spyro Reignited" (https://sketchfab.com/3d-models/spyro-spyro-reignited-bb72a671e45c4970a290519b6f46a59c) by chatholoboom7745289 (https://sketchfab.com/chabsfabo86) licensed under CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)
