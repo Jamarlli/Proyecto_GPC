@@ -2,6 +2,7 @@
 var renderer, scene, camera;
 var cameraTop;
 var cameraAerea;
+var stats;
 
 // Variables de control de personaje
 var angulo = -0.01;
@@ -805,6 +806,17 @@ function init() {
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   
   document.getElementById('container').appendChild(renderer.domElement);
+
+  // Inicializar contador de FPS
+  stats = new Stats();
+  stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+  stats.dom.style.position = 'fixed';
+  stats.dom.style.right = '10px';
+  stats.dom.style.bottom = '10px';
+  stats.dom.style.left = 'auto';
+  stats.dom.style.top = 'auto';
+  stats.dom.style.zIndex = '10000';
+  document.body.appendChild(stats.dom);
 
   scene = new THREE.Scene();
 
@@ -2745,6 +2757,8 @@ function updateMiniMapIndicator() {
 //=============================================================================
 
 function render() {
+    stats.begin();
+    
     requestAnimationFrame(render);
     update();
 
@@ -2769,6 +2783,8 @@ function render() {
         renderer.setScissorTest(false);
         renderer.render(scene, cameraTop);
     }
+    
+    stats.end();
 }
 
 //=============================================================================
