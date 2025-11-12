@@ -102,7 +102,6 @@ let miniMapUpdateCounter = 0;
 // Sistema de colisiones
 var obstaculos = [];
 var obstaculosBBoxes = [];
-var obstaculosMesh = []; // Array para objetos Three.js (usado por raycaster)
 const materialPool = [];
 
 const tmpVec = new THREE.Vector3();
@@ -383,178 +382,16 @@ function aplicarTexturasPersonaje(model, nombrePersonaje) {
 
 // Función para inicializar pool de materiales para edificios
 function initMaterialPool() {
-    const colores = [0x3D2F20, 0x2F2826, 0x0f0f0f, 0x353535];
-    const textureLoader = new THREE.TextureLoader();
-    
-    colores.forEach((color, index) => {
-        if (index === 0) {
-            // Primer tipo de edificio: con fachada texturizada
-            const colorTexture = textureLoader.load('fachadas/Facade018A_1K-JPG/Facade018A_1K-JPG_Color.jpg');
-            const normalTexture = textureLoader.load('fachadas/Facade018A_1K-JPG/Facade018A_1K-JPG_NormalGL.jpg');
-            const roughnessTexture = textureLoader.load('fachadas/Facade018A_1K-JPG/Facade018A_1K-JPG_Roughness.jpg');
-            
-            // Configurar repetición de texturas para edificios grandes
-            [colorTexture, normalTexture, roughnessTexture].forEach(texture => {
-                texture.wrapS = THREE.RepeatWrapping;
-                texture.wrapT = THREE.RepeatWrapping;
-                texture.repeat.set(2, 4); // 2 repeticiones horizontales, 4 verticales
-            });
-            
-            const fachadeMaterial = new THREE.MeshStandardMaterial({
-                map: colorTexture,
-                normalMap: normalTexture,
-                roughnessMap: roughnessTexture,
-                roughness: 0.8,
-                metalness: 0.1,
-                color: 0x444444 // Color gris para hacer los edificios menos brillantes
-            });
-            
-            // Cargar textura de asfalto para el techo
-            const asphaltTexture = textureLoader.load('fachadas/130_asphalt texture-seamless.jpg');
-            asphaltTexture.wrapS = THREE.RepeatWrapping;
-            asphaltTexture.wrapT = THREE.RepeatWrapping;
-            asphaltTexture.repeat.set(4, 4); // Repetir 4 veces en cada dirección
-            
-            const techoMaterial = new THREE.MeshLambertMaterial({ 
-                map: asphaltTexture,
-                color: 0x444444 // Color gris oscuro igual que los edificios
-            });
-            
-            materialPool.push([
-                fachadeMaterial,  // Cara frontal
-                fachadeMaterial,  // Cara trasera  
-                techoMaterial,    // Cara superior (techo)
-                techoMaterial,    // Cara inferior
-                fachadeMaterial,  // Cara derecha
-                fachadeMaterial   // Cara izquierda
-            ]);
-        } else if (index === 1) {
-            // Segundo tipo de edificio: con segunda fachada texturizada
-            const colorTexture2 = textureLoader.load('fachadas/Facade019A_1K-JPG/Facade019A_1K-JPG_Color.jpg');
-            const normalTexture2 = textureLoader.load('fachadas/Facade019A_1K-JPG/Facade019A_1K-JPG_NormalGL.jpg');
-            const roughnessTexture2 = textureLoader.load('fachadas/Facade019A_1K-JPG/Facade019A_1K-JPG_Roughness.jpg');
-            
-            // Configurar repetición de texturas para edificios grandes
-            [colorTexture2, normalTexture2, roughnessTexture2].forEach(texture => {
-                texture.wrapS = THREE.RepeatWrapping;
-                texture.wrapT = THREE.RepeatWrapping;
-                texture.repeat.set(2, 4); // 2 repeticiones horizontales, 4 verticales
-            });
-            
-            const fachadeMaterial2 = new THREE.MeshStandardMaterial({
-                map: colorTexture2,
-                normalMap: normalTexture2,
-                roughnessMap: roughnessTexture2,
-                roughness: 0.8,
-                metalness: 0.1,
-                color: 0x777777 // Color gris para hacer los edificios menos brillantes
-            });
-            
-            // Cargar textura de asfalto para el techo
-            const asphaltTexture2 = textureLoader.load('fachadas/130_asphalt texture-seamless.jpg');
-            asphaltTexture2.wrapS = THREE.RepeatWrapping;
-            asphaltTexture2.wrapT = THREE.RepeatWrapping;
-            asphaltTexture2.repeat.set(4, 4); // Repetir 4 veces en cada dirección
-            
-            const techoMaterial2 = new THREE.MeshLambertMaterial({ 
-                map: asphaltTexture2,
-                color: 0x444444 // Color gris oscuro igual que los edificios
-            });
-            
-            materialPool.push([
-                fachadeMaterial2,  // Cara frontal
-                fachadeMaterial2,  // Cara trasera  
-                techoMaterial2,    // Cara superior (techo)
-                techoMaterial2,    // Cara inferior
-                fachadeMaterial2,  // Cara derecha
-                fachadeMaterial2   // Cara izquierda
-            ]);
-        } else if (index === 2) {
-            // Tercer tipo de edificio: con textura de fachada moderna residencial
-            const residentialTexture = textureLoader.load('fachadas/coleccion-de-foto-fachada-de-moderno-residencial-o-hotel-edificio.jpg');
-            
-            // Configurar repetición de textura para edificios
-            residentialTexture.wrapS = THREE.RepeatWrapping;
-            residentialTexture.wrapT = THREE.RepeatWrapping;
-            residentialTexture.repeat.set(2, 4); // 2 repeticiones horizontales, 4 verticales
-            
-            const fachadeMaterial3 = new THREE.MeshLambertMaterial({
-                map: residentialTexture,
-                color: 0x777777 // Color gris para hacer los edificios menos brillantes
-            });
-            
-            // Cargar textura de asfalto para el techo
-            const asphaltTexture3 = textureLoader.load('fachadas/130_asphalt texture-seamless.jpg');
-            asphaltTexture3.wrapS = THREE.RepeatWrapping;
-            asphaltTexture3.wrapT = THREE.RepeatWrapping;
-            asphaltTexture3.repeat.set(4, 4); // Repetir 4 veces en cada dirección
-            
-            const techoMaterial3 = new THREE.MeshLambertMaterial({ 
-                map: asphaltTexture3,
-                color: 0x444444 // Color gris oscuro igual que los edificios
-            });
-            
-            materialPool.push([
-                fachadeMaterial3,  // Cara frontal
-                fachadeMaterial3,  // Cara trasera  
-                techoMaterial3,    // Cara superior (techo)
-                techoMaterial3,    // Cara inferior
-                fachadeMaterial3,  // Cara derecha
-                fachadeMaterial3   // Cara izquierda
-            ]);
-        } else if (index === 3) {
-            // Cuarto tipo de edificio: con textura de arquitectura moderna de cristal
-            const glassTexture = textureLoader.load('fachadas/arquitectura-moderna-del-edificio-de-cristal-edificio-moderno-con-lineas-estructurales.jpg');
-            
-            // Configurar repetición de textura para edificios cilíndricos
-            glassTexture.wrapS = THREE.RepeatWrapping;
-            glassTexture.wrapT = THREE.RepeatWrapping;
-            glassTexture.repeat.set(4, 6); // Más repeticiones para cilindros
-            
-            const fachadeMaterial4 = new THREE.MeshLambertMaterial({
-                map: glassTexture,
-                color: 0x777777 // Color gris para hacer los edificios menos brillantes
-            });
-            
-            // Cargar textura de asfalto para el techo
-            const asphaltTexture4 = textureLoader.load('fachadas/130_asphalt texture-seamless.jpg');
-            asphaltTexture4.wrapS = THREE.RepeatWrapping;
-            asphaltTexture4.wrapT = THREE.RepeatWrapping;
-            asphaltTexture4.repeat.set(4, 4); // Repetir 4 veces en cada dirección
-            
-            const techoMaterial4 = new THREE.MeshLambertMaterial({ 
-                map: asphaltTexture4,
-                color: 0x444444 // Color gris oscuro igual que los edificios
-            });
-            
-            // Para cilindros: [lado, techo superior, techo inferior]
-            materialPool.push([
-                fachadeMaterial4,  // Lado del cilindro (con textura)
-                techoMaterial4,    // Techo superior (sin textura)
-                techoMaterial4     // Base inferior (sin textura)
-            ]);
-        } else {
-            // Otros tipos de edificios: materiales simples como antes
-            // Cargar textura de asfalto para techos genéricos
-            const asphaltTextureGeneric = textureLoader.load('fachadas/130_asphalt texture-seamless.jpg');
-            asphaltTextureGeneric.wrapS = THREE.RepeatWrapping;
-            asphaltTextureGeneric.wrapT = THREE.RepeatWrapping;
-            asphaltTextureGeneric.repeat.set(4, 4); // Repetir 4 veces en cada dirección
-            
-            const techoGenerico = new THREE.MeshLambertMaterial({ 
-                map: asphaltTextureGeneric,
-                color: 0x444444 // Color gris oscuro igual que los edificios
-            });
-            
-            materialPool.push([
-                new THREE.MeshLambertMaterial({ color: color }),
-                new THREE.MeshLambertMaterial({ color: color }),
-                new THREE.MeshLambertMaterial({ color: color }),
-                techoGenerico, // Techo con textura de asfalto
-                new THREE.MeshLambertMaterial({ color: color }),
-                new THREE.MeshLambertMaterial({ color: color })
-            ]);
-        }
+    const colores = [0x3D2F20, 0x2F2826, 0x2A2A2A, 0x353535];
+    colores.forEach(color => {
+        materialPool.push([
+            new THREE.MeshLambertMaterial({ color: color }),
+            new THREE.MeshLambertMaterial({ color: color }),
+            new THREE.MeshLambertMaterial({ color: color }),
+            new THREE.MeshLambertMaterial({ color: 0x2a2a2a }),
+            new THREE.MeshLambertMaterial({ color: color }),
+            new THREE.MeshLambertMaterial({ color: color })
+        ]);
     });
 }
 
@@ -565,20 +402,15 @@ function crearEdificios() {
     initMaterialPool();
     
     const baseGeometry = new THREE.BoxGeometry(1, 1, 1);
-    const cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 8); // Radio top, radio bottom, height, radial segments
     const instancesPerColor = 250;
     const instancedBuildings = [];
     
     for (let colorIndex = 0; colorIndex < 4; colorIndex++) {
-        // El cuarto tipo (índice 3) será un cilindro, los otros seguirán siendo cajas
-        const geometry = (colorIndex === 3) ? cylinderGeometry : baseGeometry;
         const instancedMesh = new THREE.InstancedMesh(
-            geometry, 
+            baseGeometry, 
             materialPool[colorIndex], 
             instancesPerColor
         );
-        instancedMesh.castShadow = true; // Habilitar proyección de sombras para edificios
-        instancedMesh.receiveShadow = true; // Habilitar recepción de sombras entre edificios
         instancedBuildings.push(instancedMesh);
         scene.add(instancedMesh);
     }
@@ -612,82 +444,25 @@ function crearEdificios() {
         
         if (!validPosition) continue;
         
+        const matrix = new THREE.Matrix4();
+        matrix.compose(
+            new THREE.Vector3(posX, height / 2, posZ),
+            new THREE.Quaternion(),
+            new THREE.Vector3(width, height, depth)
+        );
+        
         const colorIndex = buildingCount % 4;
         const instanceIndex = Math.floor(buildingCount / 4);
-        
-        const matrix = new THREE.Matrix4();
-        
-        if (colorIndex === 3) {
-            // Para cilindros, usar escalado uniforme para hacer círculos perfectos
-            const radioBase = (width + depth) / 4;  // Radio base para escalado
-            matrix.compose(
-                new THREE.Vector3(posX, height / 2, posZ),
-                new THREE.Quaternion(),
-                new THREE.Vector3(radioBase * 2, height, radioBase * 2)  // Escalado uniforme en X y Z
-            );
-        } else {
-            // Para cajas, usar escalado normal
-            matrix.compose(
-                new THREE.Vector3(posX, height / 2, posZ),
-                new THREE.Quaternion(),
-                new THREE.Vector3(width, height, depth)
-            );
-        }
         
         if (instanceIndex < instancesPerColor) {
             instancedBuildings[colorIndex].setMatrixAt(instanceIndex, matrix);
             
-            // Crear información de colisión específica para cada tipo
-            if (colorIndex === 3) {
-                // Para cilindros, usar radio promedio para círculos perfectos
-                const radioBase = (width + depth) / 4;  // Radio base para escalado
-                // CRÍTICO: El cilindro base tiene radio=1, al escalarlo por (radioBase*2) 
-                // el radio final real es: 1 * (radioBase*2) = radioBase*2
-                const radioRealColision = radioBase * 2;
-                
-                console.log(`Creando cilindro circular: width=${width.toFixed(2)}, depth=${depth.toFixed(2)}, radioBase=${radioBase.toFixed(2)}, radioReal=${radioRealColision.toFixed(2)}`);
-                
-                const obstaculoCilindro = {
-                    tipo: 'cilindro',
-                    posicion: new THREE.Vector3(posX, height / 2, posZ),
-                    radio: radioRealColision,  // Usar el radio real, no el base
-                    altura: height,
-                    minY: 0,
-                    maxY: height
-                };
-                obstaculos.push(obstaculoCilindro);
-                
-                // Para raycaster, crear un mesh cilíndrico con el radio real
-                const meshCilindro = new THREE.Mesh(new THREE.CylinderGeometry(radioRealColision, radioRealColision, height, 8));
-                meshCilindro.position.set(posX, height / 2, posZ);
-                meshCilindro.updateMatrixWorld();
-                obstaculosMesh.push(meshCilindro);
-                
-                // Para compatibilidad con código existente, también crear bbox aproximada
-                const dummyBox = new THREE.Mesh(new THREE.BoxGeometry(radioRealColision * 2, height, radioRealColision * 2));
-                dummyBox.position.set(posX, height / 2, posZ);
-                dummyBox.updateMatrixWorld();
-                obstaculosBBoxes.push(new THREE.Box3().setFromObject(dummyBox));
-            } else {
-                // Para cajas, usar el sistema anterior
-                const obstaculoCaja = {
-                    tipo: 'caja',
-                    posicion: new THREE.Vector3(posX, height / 2, posZ),
-                    dimensiones: new THREE.Vector3(width, height, depth)
-                };
-                obstaculos.push(obstaculoCaja);
-                
-                // Para raycaster, crear un mesh de caja
-                const meshCaja = new THREE.Mesh(new THREE.BoxGeometry(width, height, depth));
-                meshCaja.position.set(posX, height / 2, posZ);
-                meshCaja.updateMatrixWorld();
-                obstaculosMesh.push(meshCaja);
-                
-                const dummyBox = new THREE.Mesh(new THREE.BoxGeometry(width, height, depth));
-                dummyBox.position.set(posX, height / 2, posZ);
-                dummyBox.updateMatrixWorld();
-                obstaculosBBoxes.push(new THREE.Box3().setFromObject(dummyBox));
-            }
+            const dummyBox = new THREE.Mesh(new THREE.BoxGeometry(width, height, depth));
+            dummyBox.position.set(posX, height / 2, posZ);
+            dummyBox.updateMatrixWorld();
+            
+            obstaculos.push(dummyBox);
+            obstaculosBBoxes.push(new THREE.Box3().setFromObject(dummyBox));
         }
         
         buildingCount++;
@@ -1022,7 +797,7 @@ function seleccionarPersonaje() {
 function init() {
   renderer = new THREE.WebGLRenderer({ antialias: false });
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setClearColor(new THREE.Color(0x999999)); // Color gris para coincidir con la niebla
+  renderer.setClearColor(new THREE.Color(0xFFFFFF));
   
   renderer.outputEncoding = THREE.sRGBEncoding;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -1456,90 +1231,34 @@ function loadScene() {
     // Crear y añadir un plano que actúe como suelo (4 veces más grande)
     const planeGeometry = new THREE.PlaneGeometry(400, 400);
     
-    // Cargar textura de asfalto sin costuras
+    // Cargar textura del suelo
     const textureLoader = new THREE.TextureLoader();
-    const pavementTexture = textureLoader.load('fachadas/asphalt-seamless.jpg');
+    const groundTexture = textureLoader.load('fachadas/TCom_Pavement_ConcreteHerringbone2_header.jpg');
     
     // Configurar repetición de la textura para cubrir todo el suelo
-    pavementTexture.wrapS = THREE.RepeatWrapping;
-    pavementTexture.wrapT = THREE.RepeatWrapping;
-    pavementTexture.repeat.set(100, 100); // Hacer la textura mucho más pequeña con más repeticiones
-    
-    // Configuraciones adicionales para mejorar la repetición
-    pavementTexture.offset.set(0, 0); // Sin offset inicial
-    pavementTexture.center.set(0.5, 0.5); // Centro de rotación en el medio
-    pavementTexture.rotation = 0; // Sin rotación inicial
-    
-    // Filtros para evitar bordes borrosos en las repeticiones
-    pavementTexture.magFilter = THREE.LinearFilter;
-    pavementTexture.minFilter = THREE.LinearMipmapLinearFilter;
-    pavementTexture.generateMipmaps = true;
+    groundTexture.wrapS = THREE.RepeatWrapping;
+    groundTexture.wrapT = THREE.RepeatWrapping;
+    groundTexture.repeat.set(50, 50); // 50x50 repeticiones para un suelo de 400x400
     
     const planeMaterial = new THREE.MeshLambertMaterial({
-        map: pavementTexture,
-        side: THREE.DoubleSide,
-        color: 0x666666 // Color gris oscuro para hacer el suelo menos brillante
+        map: groundTexture,
+        side: THREE.DoubleSide
     });
+    
     const plane = new THREE.Mesh(planeGeometry, planeMaterial);
     plane.rotation.x = Math.PI / 2;
-    plane.receiveShadow = true; // Habilitar recepción de sombras en el suelo
     scene.add(plane);
 
     // Luces 
-    const ambient = new THREE.AmbientLight(0x404040, 0.4); // Luz ambiental más tenue para destacar las sombras
+    const ambient = new THREE.AmbientLight(0x555555, 0.6);
     scene.add(ambient);
 
-    // Luz direccional principal con sombras (desde arriba con 10° y 15° de inclinación)
-    const mainLight = new THREE.DirectionalLight(0xffffff, 1.2);
-    // Posición desde arriba con 10° de inclinación hacia un lado y 15° hacia otro
-    const angleX = (10 * Math.PI) / 180; // 10° en el eje X
-    const angleZ = (15 * Math.PI) / 180; // 15° en el eje Z
-    const height = 100;
-    
-    mainLight.position.set(
-        Math.sin(angleX) * height, // X: inclinación lateral de 10°
-        Math.cos(angleX) * Math.cos(angleZ) * height, // Y: altura ajustada por ambos ángulos
-        Math.sin(angleZ) * height // Z: inclinación lateral de 15°
-    );
-    mainLight.target.position.set(0, 0, 0);
-    
-    // Configurar sombras
-    mainLight.castShadow = true;
-    mainLight.shadow.mapSize.width = 2048;  // Resolución de sombras
-    mainLight.shadow.mapSize.height = 2048;
-    mainLight.shadow.camera.near = 50;
-    mainLight.shadow.camera.far = 300;
-    mainLight.shadow.camera.left = -200;
-    mainLight.shadow.camera.right = 200;
-    mainLight.shadow.camera.top = 200;
-    mainLight.shadow.camera.bottom = -200;
-    mainLight.shadow.bias = -0.0001; // Reducir acné de sombras
-    
-    scene.add(mainLight);
-    scene.add(mainLight.target);
-
-    // Luz direccional secundaria (la original, sin sombras)
-    const sun = new THREE.DirectionalLight(0xffffff, 0.6);
+    const sun = new THREE.DirectionalLight(0xffffff, 1);
     sun.position.set(50, 100, 50);
     scene.add(sun);
 
-    const hemi = new THREE.HemisphereLight(0x87ceeb, 0x555555, 0.4);
+    const hemi = new THREE.HemisphereLight(0x87ceeb, 0x555555, 0.6);
     scene.add(hemi);
-
-    // Crear skybox con cubemap
-    const skyboxLoader = new THREE.CubeTextureLoader();
-    const skyboxTexture = skyboxLoader.load([
-        'skybox/sky_05_2k/sky_05_cubemap_2k/px.png', // Positive X
-        'skybox/sky_05_2k/sky_05_cubemap_2k/nx.png', // Negative X
-        'skybox/sky_05_2k/sky_05_cubemap_2k/py.png', // Positive Y
-        'skybox/sky_05_2k/sky_05_cubemap_2k/ny.png', // Negative Y
-        'skybox/sky_05_2k/sky_05_cubemap_2k/pz.png', // Positive Z
-        'skybox/sky_05_2k/sky_05_cubemap_2k/nz.png'  // Negative Z
-    ]);
-    scene.background = skyboxTexture;
-
-    // Añadir efecto de niebla para ocultar los límites del escenario
-    scene.fog = new THREE.Fog(0x999999, 50, 250); // Color gris, cerca: 50, lejos: 250
 
     // Crear indicador triangular para el minimapa (personaje principal)
     const indicatorGeometry = new THREE.ConeGeometry(15, 35, 3); // 5x más grande: radio 15, altura 35
@@ -1554,6 +1273,7 @@ function loadScene() {
 
     // 🏢 CREAR EDIFICIOS
     crearEdificios();
+    
 
     // Cargar GLTF de la gaviota
     const loader = new THREE.GLTFLoader();
@@ -1580,14 +1300,6 @@ function loadScene() {
         
         model.scale.set(escalaJuego, escalaJuego, escalaJuego);
         model.position.set(0, 0, 0);
-        
-        // Habilitar sombras para el personaje principal
-        model.traverse((child) => {
-            if (child.isMesh) {
-                child.castShadow = true;
-                child.receiveShadow = true;
-            }
-        });
         
         wrapper.add(model);
 
@@ -2178,29 +1890,9 @@ function verificarColisionCaca(caca) {
         new THREE.Vector3(tamañoDeteccion * 2, tamañoDeteccion * 2, tamañoDeteccion * 2)
     );
     
-    // Verificar colisiones con bounding boxes (cajas y cilindros aproximados)
     for (let i = 0; i < obstaculosBBoxes.length; i++) {
         if (cacaBox.intersectsBox(obstaculosBBoxes[i])) {
             return { tipo: 'edificio', crearMancha: true };
-        }
-    }
-    
-    // Verificar colisiones específicas para cilindros (más precisas)
-    for (let i = 0; i < obstaculos.length; i++) {
-        const obstaculo = obstaculos[i];
-        if (obstaculo.tipo === 'cilindro') {
-            // Verificar altura
-            if (pos.y >= obstaculo.minY && pos.y <= obstaculo.maxY) {
-                // Calcular distancia en plano XZ
-                const dx = pos.x - obstaculo.posicion.x;
-                const dz = pos.z - obstaculo.posicion.z;
-                const distanciaXZ = Math.sqrt(dx * dx + dz * dz);
-                
-                // Verificar si está dentro del radio del cilindro (+ radio de la caca)
-                if (distanciaXZ <= obstaculo.radio + tamañoDeteccion) {
-                    return { tipo: 'edificio-cilindro', crearMancha: true };
-                }
-            }
         }
     }
     
@@ -2490,10 +2182,6 @@ function crearNPC(genero = 'masculino', nombre = 'NPC Anónimo', rutaImagen = nu
         const model = gltf.scene;
         model.scale.set(1, 1, 1); // tamaño normal
         model.position.set(0, 0, 0);
-        
-        // NO habilitar sombras para NPCs (optimización de rendimiento)
-        // Los NPCs no proyectan sombras para mantener mejor performance
-        
         npcWrapper.add(model);
         
         // Configurar animación si existe
@@ -2824,8 +2512,8 @@ function updateCamera() {
     raycaster.set(p_pos, direction);
     raycaster.far = maxDistance;
     
-    // Detectar intersecciones con obstáculos usando el array de meshes
-    const intersects = raycaster.intersectObjects(obstaculosMesh, false);
+    // Detectar intersecciones con obstáculos
+    const intersects = raycaster.intersectObjects(obstaculos, false);
 
     let finalCamPos;
     if (intersects.length > 0) {
@@ -2857,47 +2545,6 @@ function updateCamera() {
         cameraAerea.rotation.x = -Math.PI / 2; // Mirar hacia abajo
         cameraAerea.rotation.z = 0; // Sin rotación en Z
     }
-}
-
-// Función para verificar colisión específica con cilindros
-function verificarColisionCilindro(posicionPersonaje, cilindro) {
-    // Verificar colisión en el eje Y (altura)
-    const alturaPersonaje = posicionPersonaje.y;
-    const radioPersonaje = Math.max(colliderHalfSize.x, colliderHalfSize.z); // Radio del personaje
-    
-    if (alturaPersonaje + colliderHalfSize.y < cilindro.minY || 
-        alturaPersonaje - colliderHalfSize.y > cilindro.maxY) {
-        return false; // No hay colisión en altura
-    }
-    
-    // Calcular distancia en el plano XZ
-    const dx = posicionPersonaje.x - cilindro.posicion.x;
-    const dz = posicionPersonaje.z - cilindro.posicion.z;
-    const distanciaXZ = Math.sqrt(dx * dx + dz * dz);
-    
-    // Verificar si la distancia es menor que la suma de radios
-    const distanciaMinima = cilindro.radio + radioPersonaje;
-    
-    const hayColision = distanciaXZ < distanciaMinima;
-    
-    // Debug temporal - remover después
-    if (hayColision) {
-        const distanciaActual = Math.sqrt(
-            Math.pow(p_pos.x - cilindro.posicion.x, 2) + 
-            Math.pow(p_pos.z - cilindro.posicion.z, 2)
-        );
-        const estaYaDentro = distanciaActual < cilindro.radio;
-        
-        console.log(`COLISIÓN CILINDRO:
-        - Pos personaje ACTUAL: (${p_pos.x.toFixed(2)}, ${p_pos.z.toFixed(2)}) - Dist: ${distanciaActual.toFixed(2)} ${estaYaDentro ? '🔴 YA ESTÁ DENTRO' : '🟢 FUERA'}
-        - Pos personaje NUEVA: (${posicionPersonaje.x.toFixed(2)}, ${posicionPersonaje.z.toFixed(2)}) - Dist: ${distanciaXZ.toFixed(2)}
-        - Pos cilindro: (${cilindro.posicion.x.toFixed(2)}, ${cilindro.posicion.z.toFixed(2)})
-        - Radio cilindro: ${cilindro.radio.toFixed(2)}
-        - Radio personaje: ${radioPersonaje.toFixed(2)}
-        - Distancia mínima: ${distanciaMinima.toFixed(2)}`);
-    }
-    
-    return hayColision;
 }
 
 function update() {
@@ -3011,114 +2658,38 @@ function update() {
         p_pos.z + colliderHalfSize.z
     );
 
-    // Pruebas por componentes con detección precisa para cilindros
+    // Pruebas por componentes (sistema original)
     let canMoveX = true;
     let canMoveY = true;
     let canMoveZ = true;
 
     // TEST X
-    const nuevaPosX = new THREE.Vector3(p_pos.x + tmpVec.x, p_pos.y, p_pos.z);
-    
-    // Verificar colisiones específicas para cilindros (tiene prioridad)
-    for (let i = 0; i < obstaculos.length; i++) {
-        const obstaculo = obstaculos[i];
-        if (obstaculo.tipo === 'cilindro') {
-            if (verificarColisionCilindro(nuevaPosX, obstaculo)) {
-                console.log(`BLOQUEANDO MOVIMIENTO X: tmpVec.x=${tmpVec.x.toFixed(3)}`);
-                canMoveX = false;
-                break;
-            }
-        }
-    }
-    
-    // Si no hay colisión cilíndrica, verificar colisiones con cajas usando bounding boxes
-    if (canMoveX) {
-        testBox.copy(colliderBox);
-        testBox.translate(new THREE.Vector3(tmpVec.x, 0, 0));
-        
-        for (let i = 0; i < obstaculos.length; i++) {
-            const obstaculo = obstaculos[i];
-            if (obstaculo.tipo === 'caja') {
-                // Para cajas, crear bbox temporal y verificar intersección
-                const cajaBox = new THREE.Box3().setFromCenterAndSize(
-                    obstaculo.posicion,
-                    obstaculo.dimensiones
-                );
-                if (testBox.intersectsBox(cajaBox)) {
-                    canMoveX = false;
-                    break;
-                }
-            }
+    testBox.copy(colliderBox);
+    testBox.translate(new THREE.Vector3(tmpVec.x, 0, 0));
+    for (let i = 0; i < obstaculosBBoxes.length; i++) {
+        if (testBox.intersectsBox(obstaculosBBoxes[i])) {
+            canMoveX = false;
+            break;
         }
     }
 
     // TEST Y
-    const nuevaPosY = new THREE.Vector3(p_pos.x, p_pos.y + tmpVec.y, p_pos.z);
-    
-    // Verificar colisiones específicas para cilindros (tiene prioridad)
-    for (let i = 0; i < obstaculos.length; i++) {
-        const obstaculo = obstaculos[i];
-        if (obstaculo.tipo === 'cilindro') {
-            if (verificarColisionCilindro(nuevaPosY, obstaculo)) {
-                console.log(`BLOQUEANDO MOVIMIENTO Y: tmpVec.y=${tmpVec.y.toFixed(3)}`);
-                canMoveY = false;
-                break;
-            }
-        }
-    }
-    
-    // Si no hay colisión cilíndrica, verificar colisiones con cajas
-    if (canMoveY) {
-        testBox.copy(colliderBox);
-        testBox.translate(new THREE.Vector3(0, tmpVec.y, 0));
-        
-        for (let i = 0; i < obstaculos.length; i++) {
-            const obstaculo = obstaculos[i];
-            if (obstaculo.tipo === 'caja') {
-                const cajaBox = new THREE.Box3().setFromCenterAndSize(
-                    obstaculo.posicion,
-                    obstaculo.dimensiones
-                );
-                if (testBox.intersectsBox(cajaBox)) {
-                    canMoveY = false;
-                    break;
-                }
-            }
+    testBox.copy(colliderBox);
+    testBox.translate(new THREE.Vector3(0, tmpVec.y, 0));
+    for (let i = 0; i < obstaculosBBoxes.length; i++) {
+        if (testBox.intersectsBox(obstaculosBBoxes[i])) {
+            canMoveY = false;
+            break;
         }
     }
 
     // TEST Z
-    const nuevaPosZ = new THREE.Vector3(p_pos.x, p_pos.y, p_pos.z + tmpVec.z);
-    
-    // Verificar colisiones específicas para cilindros (tiene prioridad)
-    for (let i = 0; i < obstaculos.length; i++) {
-        const obstaculo = obstaculos[i];
-        if (obstaculo.tipo === 'cilindro') {
-            if (verificarColisionCilindro(nuevaPosZ, obstaculo)) {
-                console.log(`BLOQUEANDO MOVIMIENTO Z: tmpVec.z=${tmpVec.z.toFixed(3)}`);
-                canMoveZ = false;
-                break;
-            }
-        }
-    }
-    
-    // Si no hay colisión cilíndrica, verificar colisiones con cajas
-    if (canMoveZ) {
-        testBox.copy(colliderBox);
-        testBox.translate(new THREE.Vector3(0, 0, tmpVec.z));
-        
-        for (let i = 0; i < obstaculos.length; i++) {
-            const obstaculo = obstaculos[i];
-            if (obstaculo.tipo === 'caja') {
-                const cajaBox = new THREE.Box3().setFromCenterAndSize(
-                    obstaculo.posicion,
-                    obstaculo.dimensiones
-                );
-                if (testBox.intersectsBox(cajaBox)) {
-                    canMoveZ = false;
-                    break;
-                }
-            }
+    testBox.copy(colliderBox);
+    testBox.translate(new THREE.Vector3(0, 0, tmpVec.z));
+    for (let i = 0; i < obstaculosBBoxes.length; i++) {
+        if (testBox.intersectsBox(obstaculosBBoxes[i])) {
+            canMoveZ = false;
+            break;
         }
     }
 
@@ -3126,35 +2697,6 @@ function update() {
     if (canMoveX) p_pos.x += tmpVec.x;
     if (canMoveY) p_pos.y += tmpVec.y;
     if (canMoveZ) p_pos.z += tmpVec.z;
-
-    // VERIFICACIÓN FINAL: Asegurar que la posición final no esté dentro de cilindros
-    for (let i = 0; i < obstaculos.length; i++) {
-        const obstaculo = obstaculos[i];
-        if (obstaculo.tipo === 'cilindro') {
-            // Verificar altura
-            if (p_pos.y + colliderHalfSize.y >= obstaculo.minY && 
-                p_pos.y - colliderHalfSize.y <= obstaculo.maxY) {
-                
-                // Calcular distancia en plano XZ
-                const dx = p_pos.x - obstaculo.posicion.x;
-                const dz = p_pos.z - obstaculo.posicion.z;
-                const distanciaXZ = Math.sqrt(dx * dx + dz * dz);
-                const radioPersonaje = Math.max(colliderHalfSize.x, colliderHalfSize.z);
-                const distanciaMinima = obstaculo.radio + radioPersonaje;
-                
-                if (distanciaXZ < distanciaMinima) {
-                    // ¡El personaje está dentro! Empujarlo hacia afuera
-                    const direccionX = dx / distanciaXZ;
-                    const direccionZ = dz / distanciaXZ;
-                    
-                    p_pos.x = obstaculo.posicion.x + direccionX * distanciaMinima;
-                    p_pos.z = obstaculo.posicion.z + direccionZ * distanciaMinima;
-                    
-                    console.log(`🚨 EMPUJANDO PERSONAJE FUERA DEL CILINDRO: nueva pos (${p_pos.x.toFixed(2)}, ${p_pos.z.toFixed(2)})`);
-                }
-            }
-        }
-    }
 
     // Límites del escenario - muro invisible
     const worldLimit = 200; // límite del mundo (coincide con el plano de 400x400)
@@ -3246,10 +2788,6 @@ function render() {
 
     // vista de arriba (minimapa) - solo si no está en vista aérea
     if (!vistaAereaActiva) {
-        // Desactivar fog para el minimapa
-        const originalFog = scene.fog;
-        scene.fog = null;
-        
         var ds = Math.min(window.innerHeight, window.innerWidth) / 4;
         renderer.setViewport(0, 0, ds, ds);
         renderer.setScissor(0, 0, ds, ds);
@@ -3258,9 +2796,6 @@ function render() {
         renderer.clear();
         renderer.setScissorTest(false);
         renderer.render(scene, cameraTop);
-        
-        // Reactivar fog para las vistas normales
-        scene.fog = originalFog;
     }
     
     stats.end();
